@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    </head>
+    <body>
+        <script src="wasm_exec.js"></script>
+        <script>
+            (async function() {
+                const wasmFile = "out.wasm"
+                let run
+                const go = new Go()
+                try {
+                    const { instance } = await WebAssembly.instantiateStreaming(fetch(wasmFile), go.importObject)
+                    
+                    run = go.run(instance)
+                } catch (err) {
+                    document.querySelector('#info').innerHTML = err
+                    console.log(err)
+                }
+            })()
+        </script>
+        <div id="info"></div>
+        
+    </body>
+</html>
