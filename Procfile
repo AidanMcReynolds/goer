@@ -1,1 +1,1 @@
-web: go bin/go-er
+web: bin/go-er
