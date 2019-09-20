@@ -12,6 +12,10 @@ import (
 )
 
 func main() {
+	port, err := getPort()
+  	if err != nil {
+    		log.Fatal(err)
+  	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", mainPage)
@@ -21,7 +25,7 @@ func main() {
 	mux.HandleFunc("/p/wasm_exec.js", wasmexecjs)
 	mux.HandleFunc("/out/out.wasm", outwasm)
 	mux.HandleFunc("/p/out.wasm", poutwasm)
-	err := http.ListenAndServe(":8000", mux)
+	err := http.ListenAndServe(port, mux)
 	fmt.Println(err)
 
 }
