@@ -1,1 +1,1 @@
-web: bin/goer
+web: bash start.sh
