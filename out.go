@@ -104,7 +104,7 @@ func saveSource(req *http.Request, token string) error {
 }
 
 func compile(token string) error {
-	cmd := exec.Command("go", "build", "-o", "data/"+token+"/out.wasm", "data/"+token+"/source.go")
+	cmd := exec.Command("/tmp/go/bin/go", "build", "-o", "data/"+token+"/out.wasm", "data/"+token+"/source.go")
 	cmd.Env = append(os.Environ(), "GOARCH=wasm", "GOOS=js")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
