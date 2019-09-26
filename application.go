@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	println("starting server . . . . . . ")
 	port, err := getPort()
 	if err != nil {
 		log.Fatal(err)
