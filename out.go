@@ -45,7 +45,7 @@ func wasmPage(w http.ResponseWriter, req *http.Request, t string) {
 	zipAdd("out.html", "static/out.html", zipw)
 	zipAdd("wasm_exec.js", "static/wasm_exec.js", zipw)
 	zipw.Close()
-	http.ServeContent(w, req, "your.wasm", time.Now(), bytes.NewReader(buf.Bytes()))
+	http.ServeContent(w, req, "your.zip", time.Now(), bytes.NewReader(buf.Bytes()))
 
 }
 
