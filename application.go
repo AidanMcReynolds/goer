@@ -72,12 +72,19 @@ func getToken(w http.ResponseWriter, req *http.Request) string {
 		c = &http.Cookie{Name: "auth", Value: newToken()}
 		http.SetCookie(w, c)
 	}
+	//check if foler exists
 
+	_, err = os.Stat("data/" + c.Value)
+	if os.IsNotExist(err) {
+		c = &http.Cookie{Name: "auth", Value: newToken()}
+		http.SetCookie(w, c)
+	}
 	return c.Value
 
 }
 
 func newToken() string {
+
 	for {
 		i := strconv.Itoa(rand.Intn(1000000))
 		_, err := os.Stat("data/" + i)
