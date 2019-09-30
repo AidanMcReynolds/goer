@@ -1,6 +1,8 @@
 package main
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
 	"go/format"
 	"io"
@@ -12,31 +14,7 @@ import (
 )
 
 func outputPage(w http.ResponseWriter, req *http.Request) {
-
-	if req.FormValue("button") == "Run >>>" {
-		runPage(w, req)
-	} else if req.FormValue("button") == "download WASM" {
-		wasmPage(w, req)
-	} else if req.FormValue("button") == "download source" {
-		dlPage(w, req)
-	} else if req.FormValue("button") == "link project" {
-		projectPage(w, req)
-	} else if req.FormValue("button") == "link output" {
-		userPage(w, req)
-	}
-}
-
-func projectPage(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
-	err := saveSource(req, token)
-	if err != nil {
-		io.WriteString(w, err.Error())
-	} else {
-		http.Redirect(w, req, "http://localhost/?user="+token, 307)
-	}
-}
-func userPage(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
+	token := getToken(w, req)
 	err := saveSource(req, token)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -45,54 +23,45 @@ func userPage(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			io.WriteString(w, err.Error())
 		} else {
-			http.Redirect(w, req, "http://localhost/p/?page="+token, 307)
+
+			if req.FormValue("button") == "Run >>>" {
+				runPage(w, req)
+			} else if req.FormValue("button") == "download" {
+				wasmPage(w, req, token)
+			}
 		}
 	}
 }
 
 func runPage(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
-	err := saveSource(req, token)
-	if err != nil {
-		io.WriteString(w, err.Error())
-	} else {
-		err = compile(token)
-		if err != nil {
-			io.WriteString(w, err.Error())
-		} else {
-			http.ServeFile(w, req, "static/out.html")
-		}
-	}
+
+	http.ServeFile(w, req, "static/out.html")
 
 }
-func wasmPage(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
-	err := saveSource(req, token)
-	if err != nil {
-		io.WriteString(w, err.Error())
+func wasmPage(w http.ResponseWriter, req *http.Request, t string) {
+	buf := new(bytes.Buffer)
+	zipw := zip.NewWriter(buf)
+	zipAdd("out.wasm", "data/"+t+"/out.wasm", zipw)
+	zipAdd("out.html", "static/out.html", zipw)
+	zipAdd("wasm_exec.js", "static/wasm_exec.js", zipw)
+	zipw.Close()
+	http.ServeContent(w, req, "your.wasm", time.Now(), bytes.NewReader(buf.Bytes()))
 
-	} else {
-		err = compile(token)
-		if err != nil {
-			io.WriteString(w, err.Error())
-		} else {
-			f, _ := os.Open("data/" + token + "/out.wasm")
-			http.ServeContent(w, req, "your.wasm", time.Now(), f)
-			f.Close()
-		}
-	}
 }
-func dlPage(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
-	err := saveSource(req, token)
+
+func zipAdd(name string, path string, w *zip.Writer) error {
+	f, err := w.Create(name)
 	if err != nil {
-		io.WriteString(w, err.Error())
-	} else {
-		f, _ := os.Open("data/" + token + "/source.go")
-		http.ServeContent(w, req, "your.go", time.Now(), f)
-		f.Close()
+		return err
 	}
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(f, file)
+	return err
 }
+
 func saveSource(req *http.Request, token string) error {
 	source := []byte(req.FormValue("source"))
 	source, err := format.Source(source)
@@ -104,7 +73,7 @@ func saveSource(req *http.Request, token string) error {
 }
 
 func compile(token string) error {
-	cmd := exec.Command("/tmp/go/bin/go", "build", "-o", "data/"+token+"/out.wasm", "data/"+token+"/source.go")
+	cmd := exec.Command("/tmp/go/bin/go", "build", "-o", "data/"+token+"/out.wasm", "data/"+token+"/source.go") //
 	cmd.Env = append(os.Environ(), "GOARCH=wasm", "GOOS=js")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
