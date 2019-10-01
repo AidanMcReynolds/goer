@@ -4,7 +4,7 @@
             <meta name="viewport" content="width=device-width,initial-scale=1.0">
             <style>
             div {
-                margin-top: 25px;
+                margin-top: 10px;
                 margin-right: 10%;
                 margin-left: 10%;
             }
@@ -13,10 +13,11 @@
     </head>
     <body>
         <div>
-            <h3>Goer</h3></br>
-            Golang WASM tool <a href="/about.html">about</a>
+            <h3>Goer - Golang WASM tool</h3>
+            Created by Aidan McReynolds <a href="/about.html">about</a>
         </div>
         <div>
+            
             <form action="/out/" method = "POST" target = "_blank">
                 <input type="submit" name="button" value="download"> 
                 <input type="submit" name="button" value="Run >>>">
@@ -26,6 +27,6 @@
                 
             </form>
         </div>
-        js.Global().Get("document").Call("getElementById", "info").Set("innerHTML","")
+
         
     </body>
