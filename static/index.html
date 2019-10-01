@@ -3,7 +3,7 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width,initial-scale=1.0">
             <style>
-            form {
+            div {
                 margin-top: 25px;
                 margin-right: 10%;
                 margin-left: 10%;
@@ -12,16 +12,20 @@
             </style>
     </head>
     <body>
-            
-
-        <form action="/out/" method = "POST" target = "_blank">
-            <input type="submit" name="button" value="download"> 
-            <input type="submit" name="button" value="Run >>>">
-            <br>
-            <textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"
-            type="textarea" class="code" spellcheck="false" name="source" id="source" rows="50" cols="150">{{.Source}}</textarea><br>
-            
-        </form>
+        <div>
+            <h3>Goer</h3></br>
+            Golang WASM tool <a href="/about.html">about</a>
+        </div>
+        <div>
+            <form action="/out/" method = "POST" target = "_blank">
+                <input type="submit" name="button" value="download"> 
+                <input type="submit" name="button" value="Run >>>">
+                <br>
+                <textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}"
+                type="textarea" class="code" spellcheck="false" name="source" id="source" rows="50" cols="150">{{.Source}}</textarea><br>
+                
+            </form>
+        </div>
         js.Global().Get("document").Call("getElementById", "info").Set("innerHTML","")
         
     </body>

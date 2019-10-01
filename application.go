@@ -21,10 +21,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", mainPage)
+	mux.HandleFunc("/about.html", about)
 	mux.HandleFunc("/out/", outputPage)
-
 	mux.HandleFunc("/out/wasm_exec.js", wasmexecjs)
-
 	mux.HandleFunc("/out/out.wasm", outwasm)
 
 	err = http.ListenAndServe(port, mux)
@@ -42,6 +41,11 @@ func getPort() (string, error) {
 func wasmexecjs(w http.ResponseWriter, req *http.Request) {
 	f, _ := os.Open("static/wasm_exec.js")
 	http.ServeContent(w, req, "static/wasm_exec.js", time.Now(), f)
+	f.Close()
+}
+func wasmexecjs(w http.ResponseWriter, req *http.Request) {
+	f, _ := os.Open("static/about.html")
+	http.ServeContent(w, req, "static/about.html", time.Now(), f)
 	f.Close()
 }
 

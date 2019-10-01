@@ -1,0 +1,111 @@
+<html lang="en">
+    <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1.0">
+            <style>
+            div {
+                margin-top: 25px;
+                margin-right: 10%;
+                margin-left: 10%;
+            }
+            
+            </style>
+    </head>
+    <body>
+        <div>
+            <h3>Goer</h3></br>
+            Golang WASM tool <a href="/about.html">about</a>
+        </div>
+        <div>
+            <p>
+                This is a tool designed to assist in development of simple client-side web applications in Go (programming language) with wasm.
+                It compiles sumbmitted code and returns a .wasm file with necassary supporting files.
+                I mostly expect this to be used as an educational tool rather than a way to develop professional applications. 
+            </p>
+            <p>
+                This runs on Go version 1.13.1 which is the most recent version as of October 1, 2019. 
+            </p>
+            <code><pre>
+package main
+
+func main(){
+    println("hello world")
+}
+</pre></code>
+            <p>This simple "hello, world" program works just the same in wasm as it does normally. Open your browser's web console to see the result.</p>
+            <p>Let's look at a more complicated example.</p>
+            <code><pre>
+package main
+
+import (
+	"strconv"
+	"syscall/js"
+)
+
+func main() {
+	html := `Elements of the fibonacci sequence from the 0th to the nth element.&lt;/br>&lt;input type="text" id="n"/>&lt;span id="err">&lt;/span>&lt;/br>
+    &lt;button onClick="fib();">run&lt;/button>&lt;/br>
+    &lt;div id="result">&lt;/div>`
+	js.Global().Get("document").Call("getElementById", "info").Set("innerHTML", html)
+
+	c := make(chan struct{}, 0)
+	js.Global().Set("fib", js.FuncOf(fib))
+	<-c
+}
+
+func fib(this js.Value, args []js.Value) interface{} {
+	
+	val := js.Global().Get("document").Call("getElementById", "n").Get("value").String()
+	n, err := strconv.Atoi(val)
+	if n < 0 || err != nil {
+		js.Global().Get("document").Call("getElementById", "err").Set("innerHTML", " invalid input")
+	} else {
+		js.Global().Get("document").Call("getElementById", "err").Set("innerHTML", "")
+		js.Global().Get("document").Call("getElementById", "result").Set("innerHTML", fibn(n))
+	}
+	return nil
+
+}
+func fibn(n int) string {
+	x := []int{0}
+	
+	if n > 0 {
+		x = append(x,1)
+		if n > 1 {
+			for i:=2;i<=n;i++{
+				x = append(x,x[i-1]+x[i-2])
+			}
+		}
+	}
+	
+	//convert to string	
+	y := ""
+	for _,v := range x{
+		y = y + " " + strconv.Itoa(v)
+	}
+	return y
+}
+               </pre></code>
+               <p>
+                   Let's break it down. 
+               </p>
+               <code>js.Global().Get("document").Call("getElementById", "info").Set("innerHTML", html)</code>
+               <p>
+                   Here we're setting the element "info" to the value of the string called html. "info" is a div tag in the default .html file served with your code. 
+               </p>
+               <code><pre>
+c := make(chan struct{}, 0)
+js.Global().Set("fib", js.FuncOf(fib))
+<-c
+               </pre></code>
+               <p>
+                   Here we assign the javascript function "fib" to the go function fib. The go function must be in the form <i>func(this js.Value, args []js.Value) interface{}</i>. We set up a channel to ensure the program doesn't close.
+               </p>
+               <code>
+                    val := js.Global().Get("document").Call("getElementById", "n").Get("value").String()
+               </code>
+               <p>Here we get the value from the input with the id "n" and convert it into a string. We then convert it to int and check for errors.</p>
+        </div>
+        js.Global().Get("document").Call("getElementById", "info").Set("innerHTML","")
+        
+    </body>
