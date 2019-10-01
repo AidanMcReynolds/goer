@@ -43,7 +43,7 @@ func wasmexecjs(w http.ResponseWriter, req *http.Request) {
 	http.ServeContent(w, req, "static/wasm_exec.js", time.Now(), f)
 	f.Close()
 }
-func wasmexecjs(w http.ResponseWriter, req *http.Request) {
+func about(w http.ResponseWriter, req *http.Request) {
 	f, _ := os.Open("static/about.html")
 	http.ServeContent(w, req, "static/about.html", time.Now(), f)
 	f.Close()
