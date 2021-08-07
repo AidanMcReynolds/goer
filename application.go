@@ -78,7 +78,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 	tmpl, _ := template.ParseFiles("views/index.html")
 	f, err := ioutil.ReadFile("data/" + t + "/source.go")
 	if err != nil {
-		f, _ = ioutil.ReadFile("static/default.go")
+		f, _ = ioutil.ReadFile("static/default.go.file")
 	}
 	s := sourcefile{Source: string(f)}
 	tmpl.Execute(w, s)
