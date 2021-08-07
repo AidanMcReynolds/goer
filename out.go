@@ -26,7 +26,7 @@ func outputPage(w http.ResponseWriter, req *http.Request) {
 
 			if req.FormValue("button") == "Run >>>" {
 				runPage(w, req)
-			} else if req.FormValue("button") == "download" {
+			} else if req.FormValue("button") == "Save your project" {
 				wasmPage(w, req, token)
 			}
 		}
