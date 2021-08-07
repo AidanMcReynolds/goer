@@ -1,0 +1,36 @@
+body {
+    background-color: #2E99F2;
+    font-family: 'Poppins', sans-serif;
+}
+#main div{
+    width: 95%;
+    height: 100%;
+    max-width: 1000px;
+    margin: auto;
+}
+#main input,#main textarea {
+    border: none;
+    border-radius: 5px;
+}
+#run{
+    background-color: #962EF2;
+    color:white;
+}
+#download{
+    background-color: #373BE6;
+    color:white;
+}
+#source{
+    margin-top: 5pt;
+    width: 100%;
+    height: 400px;
+    color:black;
+}
+#main{
+    width: 100%;
+    height: 96vh;
+    margin: auto;
+    display: grid;
+    grid-template-rows: 10% 85% 5%;
+    color: white;
+}

@@ -20,7 +20,19 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", mainPage)
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		if req.URL.Path == "/" {
+			mainPage(w, req);
+		} else {
+			f, err := os.Open("static" + req.URL.Path);
+			if err != nil {
+				http.NotFound(w,req);
+			} else {
+				http.ServeContent(w, req, req.URL.Path, time.Now(), f)
+			}
+		}
+	})
+
 	mux.HandleFunc("/about.html", about)
 	mux.HandleFunc("/out/", outputPage)
 	mux.HandleFunc("/out/wasm_exec.js", wasmexecjs)
@@ -34,7 +46,10 @@ func getPort() (string, error) {
 	// the PORT is supplied by Heroku
 	port := os.Getenv("PORT")
 	if port == "" {
-		return "", fmt.Errorf("$PORT not set")
+		// not running on Heroku
+		// return "", fmt.Errorf("$PORT not set")
+		// default port 9000 for testing
+		return ":9000", nil
 	}
 	return ":" + port, nil
 }
@@ -60,7 +75,7 @@ func mainPage(w http.ResponseWriter, req *http.Request) {
 
 	t := getToken(w, req)
 
-	tmpl, _ := template.ParseFiles("static/index.html")
+	tmpl, _ := template.ParseFiles("views/index.html")
 	f, err := ioutil.ReadFile("data/" + t + "/source.go")
 	if err != nil {
 		f, _ = ioutil.ReadFile("static/default.go")
@@ -76,7 +91,7 @@ func getToken(w http.ResponseWriter, req *http.Request) string {
 		c = &http.Cookie{Name: "auth", Value: newToken()}
 		http.SetCookie(w, c)
 	}
-	//check if foler exists
+	//check if folder exists
 
 	_, err = os.Stat("data/" + c.Value)
 	if os.IsNotExist(err) {
