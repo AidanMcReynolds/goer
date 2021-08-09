@@ -14,7 +14,7 @@
     <body>
         <div>
             <h3>Goer</h3></br>
-            Golang WASM tool <a href="/about.html">about</a>
+            Golang Webassembly Utility - created by <a href='https://github.com/AidanMcReynolds'>Aidan McReynolds</a> 
         </div>
         <div>
             <p>
@@ -105,6 +105,7 @@ js.Global().Set("fib", js.FuncOf(fib))
                     val := js.Global().Get("document").Call("getElementById", "n").Get("value").String()
                </code>
                <p>Here we get the value from the input with the id "n" and convert it into a string. We then convert it to int and check for errors.</p>
-        </div>
+               <p>You can see this is a simple way to get started with go and web assembly. More info about go can be found at <a href='https://golang.org/'>https://golang.org/</a></p>
+            </div>
         
     </body>
